@@ -5,8 +5,8 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-apt install -y hostapd
-apt install -y dnsmasq
+apt-get install -y hostapd
+apt-get install -y dnsmasq
 
 SSID="raspi-ap"
 WIFIPSWD="raspi123456"

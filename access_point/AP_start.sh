@@ -1,22 +1,27 @@
 #!/bin/bash
 
+if [ "$EUID" -ne 0 ]
+  then echo "Must run as root: 'sudo ./AP_start.sh'"
+  exit
+fi
+
 # Enable the wireless access point service and set it to start when your Raspberry Pi boots
-sudo systemctl unmask hostapd
-sudo systemctl enable hostapd
+systemctl unmask hostapd
+systemctl enable hostapd
 
-sudo cp /etc/dhcpcd.conf.ap /etc/dhcpcd.conf
+cp /etc/dhcpcd.conf.ap /etc/dhcpcd.conf
 
-sudo cp /etc/dnsmasq.conf.ap /etc/dnsmasq.conf
+cp /etc/dnsmasq.conf.ap /etc/dnsmasq.conf
 
 #enable wifi connexion
-sudo rfkill unblock wlan
+rfkill unblock wlan
 
-sudo cp /etc/hostapd/hostapd.conf.ap /etc/hostapd/hostapd.conf
+cp /etc/hostapd/hostapd.conf.ap /etc/hostapd/hostapd.conf
 
-sudo cp /etc/default/hostapd.ap /etc/default/hostapd
+cp /etc/default/hostapd.ap /etc/default/hostapd
 
 
-sudo service hostapd start
+service hostapd start
 
 echo "Please reboot now with : 
-sudo systemctl reboot"
+systemctl reboot"

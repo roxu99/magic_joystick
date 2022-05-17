@@ -1,7 +1,12 @@
 #!/bin/bash
 
-sudo apt install hostapd
-sudo apt install dnsmasq
+if [ "$EUID" -ne 0 ]
+  then echo "Must run as root: 'sudo ./AP_setup.sh'"
+  exit
+fi
+
+apt install -y hostapd
+apt install -y dnsmasq
 
 SSID="raspi-ap"
 WIFIPSWD="raspi123456"
@@ -12,8 +17,8 @@ if [ -e /etc/dhcpcd.conf.bak ]
 then 
 echo "Le fichier /etc/dhcpcd.conf.bak existe deja"
 else 
-sudo cp /etc/dhcpcd.conf /etc/dhcpcd.conf.bak
-sudo cp /etc/dhcpcd.conf /etc/dhcpcd.conf.ap
+cp /etc/dhcpcd.conf /etc/dhcpcd.conf.bak
+cp /etc/dhcpcd.conf /etc/dhcpcd.conf.ap
 echo "
 # RaspAP wlan0 configuration
 interface wlan0
@@ -27,7 +32,7 @@ if [ -e /etc/dnsmasq.conf.bak ]
 then 
 echo "Le fichier /etc/dnsmasq.conf.bak existe deja"
 else 
-sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.bak
+cp /etc/dnsmasq.conf /etc/dnsmasq.conf.bak
 echo "# Listening interface
 interface=wlan0
 
@@ -42,13 +47,13 @@ address=/gw.wlan/192.168.4.1" > /etc/dnsmasq.conf.ap
 fi
 
 #enable wifi connexion
-#sudo rfkill unblock wlan
+#rfkill unblock wlan
 
 if [ -e /etc/hostapd/hostapd.conf.bak ]
 then 
 echo "Le fichier /etc/hostapd/hostapd.conf.bak existe deja"
 else 
-sudo cp /etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf.bak
+cp /etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf.bak
 echo "
 #with all Linux driver mac80211
 driver=nl80211
@@ -113,6 +118,6 @@ echo "Le fichier /etc/default/hostapd.bak exist deja
 Arret de AP_setup.sh"
 exit 0
 else 
-sudo cp /etc/default/hostapd /etc/default/hostapd.bak
+cp /etc/default/hostapd /etc/default/hostapd.bak
 echo "DAEMON_CONF=\"etc/hostapd/hostapd.conf\"" > /etc/default/hostapd.conf.ap
 fi

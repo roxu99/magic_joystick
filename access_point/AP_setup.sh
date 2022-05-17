@@ -10,9 +10,7 @@ CHANNEL="11"
 # Set up the Network Router
 if [ -e /etc/dhcpcd.conf.bak ]
 then 
-echo "Le fichier /etc/dhcpcd.conf.bak existe
--> Arret de AP_setup.sh"
-exit 0
+echo "Le fichier /etc/dhcpcd.conf.bak existe deja"
 else 
 sudo cp /etc/dhcpcd.conf /etc/dhcpcd.conf.bak
 sudo cp /etc/dhcpcd.conf /etc/dhcpcd.conf.ap
@@ -27,9 +25,7 @@ fi
 
 if [ -e /etc/dnsmasq.conf.bak ]
 then 
-echo "Le fichier /etc/dnsmasq.conf.bak exist
-Arret de AP_setup.sh"
-exit 0
+echo "Le fichier /etc/dnsmasq.conf.bak existe deja"
 else 
 sudo cp /etc/dnsmasq.conf /etc/dnsmasq.conf.bak
 echo "# Listening interface
@@ -50,9 +46,7 @@ fi
 
 if [ -e /etc/hostapd/hostapd.conf.bak ]
 then 
-echo "Le fichier /etc/hostapd/hostapd.conf.bak exist
-Arret de AP_setup.sh"
-exit 0
+echo "Le fichier /etc/hostapd/hostapd.conf.bak existe deja"
 else 
 sudo cp /etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf.bak
 echo "
@@ -115,7 +109,7 @@ fi
 
 if [ -e /etc/default/hostapd.bak ]
 then 
-echo "Le fichier /etc/default/hostapd.bak exist
+echo "Le fichier /etc/default/hostapd.bak exist deja
 Arret de AP_setup.sh"
 exit 0
 else 

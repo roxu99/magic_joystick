@@ -8,7 +8,7 @@ fi
 systemctl mask hostapd
 
 #cp /etc/dhcpcd.conf /etc/dhcpcd.conf.ap
-cp /etc/dhcpcd.bak /etc/dhcpcd.conf
+cp /etc/dhcpcd.conf.bak /etc/dhcpcd.conf
 
 cp /etc/dnsmasq.conf.bak /etc/dnsmasq.conf
 
@@ -18,5 +18,8 @@ cp /etc/default/hostapd.bak /etc/default/hostapd
 
 service hostapd stop
 
-echo "Please reboot now with : 
-systemctl reboot"
+#enable wifi connexion
+rfkill unblock wlan
+
+echo "Please shutdown now with : 
+sudo poweroff"

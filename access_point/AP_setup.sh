@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Fichier de setup permettant de sauvegarder les fichiers de configuration
+# initiaux dans des fichier.bak avant de créer ceux nécessaire pour la configutation
+# du wifi Access Point en fichier.ap
+
 if [ "$EUID" -ne 0 ]
   then echo "Must run as root: 'sudo ./AP_setup.sh'"
   exit
@@ -11,6 +15,7 @@ apt-get install -y dnsmasq
 SSID="raspi-ap"
 WIFIPSWD="raspi123456"
 CHANNEL="11"
+IPRESO="192.168.4" #192.168.X
 
 # Set up the Network Router
 if [ -e /etc/dhcpcd.conf.bak ]
@@ -22,9 +27,9 @@ cp /etc/dhcpcd.conf /etc/dhcpcd.conf.ap
 echo "
 # RaspAP wlan0 configuration
 interface wlan0
-static ip_address=192.168.4.1/24
-static router=192.168.4.1
-static domain_name_servers=192.168.4.1 8.8.8.8" >> /etc/dhcpcd.conf.ap
+static ip_address=$IPRESO.1/24
+static router=$IPRESO.1
+static domain_name_servers=$IPRESO.1 8.8.8.8" >> /etc/dhcpcd.conf.ap
 echo "Le fichier /etc/dhcpcd.conf est correctement configuré "
 fi
 
@@ -37,13 +42,13 @@ echo "# Listening interface
 interface=wlan0
 
 # Pool of IP addresses served via DHCP
-dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
+dhcp-range=$IPRESO.2,$IPRESO.20,255.255.255.0,24h
 
 # Local wireless DNS domain
 domain=wlan
 
 # Alias for this router
-address=/gw.wlan/192.168.4.1" > /etc/dnsmasq.conf.ap
+address=/gw.wlan/$IPRESO.1" > /etc/dnsmasq.conf.ap
 echo "Le fichier /etc/dnsmasq.conf est correctement configuré "
 fi
 

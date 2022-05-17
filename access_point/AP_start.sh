@@ -23,5 +23,5 @@ cp /etc/default/hostapd.ap /etc/default/hostapd
 
 service hostapd start
 
-echo "Please reboot now with : 
-systemctl reboot"
+echo "Please shutdown now with : 
+sudo poweroff"

@@ -25,7 +25,7 @@ interface wlan0
 static ip_address=192.168.4.1/24
 static router=192.168.4.1
 static domain_name_servers=192.168.4.1 8.8.8.8" >> /etc/dhcpcd.conf.ap
-
+echo "Le fichier /etc/dhcpcd.conf est correctement configuré "
 fi
 
 if [ -e /etc/dnsmasq.conf.bak ]
@@ -44,6 +44,7 @@ domain=wlan
 
 # Alias for this router
 address=/gw.wlan/192.168.4.1" > /etc/dnsmasq.conf.ap
+echo "Le fichier /etc/dnsmasq.conf est correctement configuré "
 fi
 
 #enable wifi connexion
@@ -53,6 +54,7 @@ if [ -e /etc/hostapd/hostapd.conf.bak ]
 then 
 echo "Le fichier /etc/hostapd/hostapd.conf.bak existe deja"
 else 
+touch /etc/hostapd/hostapd.conf
 cp /etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf.bak
 echo "
 #with all Linux driver mac80211
@@ -110,14 +112,14 @@ macaddr_acl=0
 
 # Rend le nom du point d'acces wifi invisible (0 desactive, 1 active)
 ignore_broadcast_ssid=0" > /etc/hostapd/hostapd.conf.ap
+echo "Le fichier /etc/hostapd/hostapd.conf est correctement configuré "
 fi
 
 if [ -e /etc/default/hostapd.bak ]
 then 
-echo "Le fichier /etc/default/hostapd.bak exist deja
-Arret de AP_setup.sh"
-exit 0
+echo "Le fichier /etc/default/hostapd.bak exist deja"
 else 
 cp /etc/default/hostapd /etc/default/hostapd.bak
-echo "DAEMON_CONF=\"etc/hostapd/hostapd.conf\"" > /etc/default/hostapd.conf.ap
+echo "DAEMON_CONF=\"etc/hostapd/hostapd.conf\"" > /etc/default/hostapd.ap
+echo "Le fichier /etc/default/hostapd est correctement configuré "
 fi

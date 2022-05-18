@@ -16,6 +16,10 @@
 # 5- pip3 install all python packages (ADC, Screen, ...)
 #
 #
+
+#dossier où se trouve ce script à l'exécution
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 if [ "$EUID" -ne 0 ]
   then echo "Must run as root: 'sudo ./setup.sh'"
   exit
@@ -76,9 +80,16 @@ echo "running apt-update and installing required modules ..."
 apt-get -y update
 apt-get -y install can-utils build-essential python3-dev git python3-pip cmake
 apt-get -y install mosquitto bluez libcap2-bin
+apt-get -y install hostapd dnsmasq
+
 echo "running pip3 and installing required modules ..."
 # ===========================================================
 pip3 install -r requirements.txt
+
+echo "wifi raspberry Acces Point"
+# ===========================================================
+$SCRIPT_DIR/access_point/AP_setup.sh
+$SCRIPT_DIR/access_point/AP_start.sh
 
 echo "Installing Magick Joystick python library"
 pip3 install -e .

@@ -25,14 +25,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 echo ""
-echo "==================== PHASE 1 ==================="
-echo "Installation des dépendances : 'hostapd' et 'dnsmasq' ..."
-apt-get install -y hostapd
-apt-get install -y dnsmasq
-
-echo ""
-echo "==================== PHASE 2 ==================="
-echo "Mise en place des fichiers de configuration (et backups) ..."
+echo "Mise en place des fichiers de configuration (et backups) pour l'Access Point"
 
 
 # Set up the Network Router

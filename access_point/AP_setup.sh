@@ -1,26 +1,44 @@
 #!/bin/bash
 
-# Fichier de setup permettant de sauvegarder les fichiers de configuration
-# initiaux dans des fichier.bak avant de créer ceux nécessaire pour la configutation
-# du wifi Access Point en fichier.ap
+# Ce script permet l'initialisation des fichiers servants à l'activation et à la désactivation de l'acces point sur la Raspi
+# Les variables SSID WIFIPSWD CHANNEL IPRESO sont à changer. 
+# Par défaut l'adresse IP de la raspi est "IPRESO.1"
+# 
+# 1 - Installation de hostapd et dnsmasq (utilitaires)
+# 2 - Création de fichiers <file>.bak qui servent à sauvegarder l'état initiale de ces fichiers 
+# 3 - Création de fichier <file>.ap avec le contenu necessaire au fonctionnement de l'Acces Point
+# 
+# Notes : 
+#   - Il est important de ne PAS indenter le fichier (les echo le seraient aussi dans les fichiers destination)
+#   - Par défaut le point d'accès est désactivé. Utilisez "sudo ./AP_start.sh" pour l'activer.
+#
+
+SSID="raspi-ap"
+WIFIPSWD="raspi123456" #Min 8 lettres et chiffes
+CHANNEL="11" # A changer si pluieurs raspi proches
+IPRESO="192.168.4" #192.168.X ou 10.X.X
+
 
 if [ "$EUID" -ne 0 ]
   then echo "Must run as root: 'sudo ./AP_setup.sh'"
-  exit
+  exit 1
 fi
 
+echo ""
+echo "========== PHASE 1 ========="
+echo "Installation des dépendances : 'hostapd' et 'dnsmasq' ..."
 apt-get install -y hostapd
 apt-get install -y dnsmasq
 
-SSID="raspi-ap"
-WIFIPSWD="raspi123456"
-CHANNEL="11"
-IPRESO="192.168.4" #192.168.X
+echo ""
+echo "========== PHASE 2 ========="
+echo "Mise en place des fichiers de configuration (et backups) ..."
+
 
 # Set up the Network Router
 if [ -e /etc/dhcpcd.conf.bak ]
 then 
-echo "Le fichier /etc/dhcpcd.conf.bak existe deja"
+echo "Le fichier /etc/dhcpcd.conf.bak existe déjà."
 else 
 cp /etc/dhcpcd.conf /etc/dhcpcd.conf.bak
 cp /etc/dhcpcd.conf /etc/dhcpcd.conf.ap
@@ -35,7 +53,7 @@ fi
 
 if [ -e /etc/dnsmasq.conf.bak ]
 then 
-echo "Le fichier /etc/dnsmasq.conf.bak existe deja"
+echo "Le fichier /etc/dnsmasq.conf.bak existe déjà."
 else 
 cp /etc/dnsmasq.conf /etc/dnsmasq.conf.bak
 echo "# Listening interface
@@ -57,7 +75,7 @@ fi
 
 if [ -e /etc/hostapd/hostapd.conf.bak ]
 then 
-echo "Le fichier /etc/hostapd/hostapd.conf.bak existe deja"
+echo "Le fichier /etc/hostapd/hostapd.conf.bak existe déjà."
 else 
 touch /etc/hostapd/hostapd.conf
 cp /etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf.bak
@@ -122,9 +140,20 @@ fi
 
 if [ -e /etc/default/hostapd.bak ]
 then 
-echo "Le fichier /etc/default/hostapd.bak exist deja"
+echo "Le fichier /etc/default/hostapd.bak exist déjà."
 else 
 cp /etc/default/hostapd /etc/default/hostapd.bak
 echo "DAEMON_CONF=\"etc/hostapd/hostapd.conf\"" > /etc/default/hostapd.ap
 echo "Le fichier /etc/default/hostapd est correctement configuré "
 fi
+
+# Commandes pour supprimer tous les fichier bak ou ap
+# sudo rm -f /etc/dhcpcd.conf.ap
+# sudo rm -f /etc/dnsmasq.conf.ap
+# sudo rm -f /etc/hostapd/hostapd.conf.ap
+# sudo rm -f /etc/default/hostapd.ap
+# sudo rm -f /etc/dhcpcd.conf.bak
+# sudo rm -f /etc/dnsmasq.conf.bak
+# sudo rm -f /etc/hostapd/hostapd.conf.bak
+# sudo rm -f /etc/default/hostapd.bak
+# sudo rm -f /etc/hostapd/hostapd.conf

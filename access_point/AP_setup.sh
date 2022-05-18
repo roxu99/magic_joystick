@@ -4,9 +4,8 @@
 # Les variables SSID WIFIPSWD CHANNEL IPRESO sont à changer. 
 # Par défaut l'adresse IP de la raspi est "IPRESO.1"
 # 
-# 1 - Installation de hostapd et dnsmasq (utilitaires)
-# 2 - Création de fichiers <file>.bak qui servent à sauvegarder l'état initiale de ces fichiers 
-# 3 - Création de fichier <file>.ap avec le contenu necessaire au fonctionnement de l'Acces Point
+# 1 - Création de fichiers <file>.bak qui servent à sauvegarder l'état initiale de ces fichiers 
+# 2 - Création de fichier <file>.ap avec le contenu necessaire au fonctionnement de l'Acces Point
 # 
 # Notes : 
 #   - Il est important de ne PAS indenter le fichier (les echo le seraient aussi dans les fichiers destination)

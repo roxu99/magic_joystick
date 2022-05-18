@@ -25,13 +25,13 @@ if [ "$EUID" -ne 0 ]
 fi
 
 echo ""
-echo "========== PHASE 1 ========="
+echo "==================== PHASE 1 ==================="
 echo "Installation des dépendances : 'hostapd' et 'dnsmasq' ..."
 apt-get install -y hostapd
 apt-get install -y dnsmasq
 
 echo ""
-echo "========== PHASE 2 ========="
+echo "==================== PHASE 2 ==================="
 echo "Mise en place des fichiers de configuration (et backups) ..."
 
 
@@ -146,6 +146,8 @@ cp /etc/default/hostapd /etc/default/hostapd.bak
 echo "DAEMON_CONF=\"etc/hostapd/hostapd.conf\"" > /etc/default/hostapd.ap
 echo "Le fichier /etc/default/hostapd est correctement configuré "
 fi
+
+echo ""
 
 # Commandes pour supprimer tous les fichier bak ou ap
 # sudo rm -f /etc/dhcpcd.conf.ap

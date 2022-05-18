@@ -13,7 +13,8 @@ if [ "$EUID" -ne 0 ]
 fi
 
 # Check si setup fait ou pas
-if [ -e /etc/dhcpcd.conf.bak ] then 
+if [ -e /etc/dhcpcd.conf.bak ] 
+then 
   echo "Activation du point d'accès..."
 else 
   echo "Il faut d'abord lancer le setup: 

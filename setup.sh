@@ -86,16 +86,16 @@ echo "running pip3 and installing required modules ..."
 # ===========================================================
 pip3 install -r requirements.txt
 
-echo "wifi raspberry Acces Point"
-# ===========================================================
-$SCRIPT_DIR/access_point/AP_setup.sh
-$SCRIPT_DIR/access_point/AP_start.sh
-
 echo "Installing Magick Joystick python library"
 pip3 install -e .
 
 echo "Installing service startup"
 cat magick_joystick.service | sed "s|@PWD@|$PWD|g" > /etc/systemd/system/magick_joystick.service
+
+echo "wifi raspberry Acces Point"
+# ===========================================================
+$SCRIPT_DIR/access_point/AP_setup.sh
+$SCRIPT_DIR/access_point/AP_start.sh
 
 echo "Setup done"
 echo ""

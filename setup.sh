@@ -17,18 +17,23 @@
 #
 #
 
+
+
 #dossier où se trouve ce script à l'exécution
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 if [ "$EUID" -ne 0 ]
   then echo "Must run as root: 'sudo ./setup.sh'"
   exit
 fi
 
+
+
+
+
 echo "Updating /boot/config.txt ..."
 # ==============================================
 cp /boot/config.txt /boot/config.txt.bak
-read -r -d '' BOOT_CFG << EOF
+BOOT_CFG="
 
 # MagicJoy config starts =============
 dtparam=i2c_arm=on
@@ -37,13 +42,18 @@ dtoverlay=mcp2515-can1,oscillator=16000000,interrupt=24
 dtoverlay=spi1-hw-cs
 dtoverlay=spi0-hw-cs
 # MagicJoy config stops =============
-EOF
-echo $BOOT_CFG >> /boot/config.txt
+"
+echo "$BOOT_CFG" >> /boot/config.txt
+
+
+
+
 
 echo "Updating /etc/network/interfaces ..."
 # ==============================================
 cp /etc/network/interfaces /etc/network/interfaces.bak
-read -r -d '' NET_ITF << EOF
+NET_ITF="
+
 # MagicJoy config starts =============
 # pican interface0 configuration
 allow-hotplug can0
@@ -59,21 +69,29 @@ iface can1 can static
        down /sbin/ip link set $IFACE down
        up /sbin/ip link set $IFACE up
 # MagicJoy config stops =============
-EOF
-echo "$NET_IF" >> /etc/network/interfaces
+"
+echo "$NET_ITF" >> /etc/network/interfaces
+
+
+
 
 
 echo "Updating /etc/modules ..."
 # ==============================================
 cp /etc/modules /etc/modules.bak
-read -r -d '' MODULES << EOF
+MODULES="
+
 # MagicJoy config starts =============
 i2c-dev
 mcp251x
 can_dev
 # MagicJoy config stops =============
-EOF
+"
 echo "$MODULES" >> /etc/modules
+
+
+
+
 
 echo "running apt-update and installing required modules ..."
 # ===========================================================
@@ -82,20 +100,34 @@ apt-get -y install can-utils build-essential python3-dev git python3-pip cmake
 apt-get -y install mosquitto bluez libcap2-bin
 apt-get -y install hostapd dnsmasq
 
+
+
+
+
 echo "running pip3 and installing required modules ..."
 # ===========================================================
 pip3 install -r requirements.txt
 
+
+
+
+
 echo "Installing Magick Joystick python library"
 pip3 install -e .
+
+
+
 
 echo "Installing service startup"
 cat magick_joystick.service | sed "s|@PWD@|$PWD|g" > /etc/systemd/system/magick_joystick.service
 
-echo "wifi raspberry Acces Point"
+
+
+
+echo "Setup wifi raspberry Acces Point"
 # ===========================================================
-$SCRIPT_DIR/access_point/AP_setup.sh
-$SCRIPT_DIR/access_point/AP_start.sh
+./access_point/AP_setup.sh
+#./access_point/AP_start.sh
 
 echo "Setup done"
 echo ""

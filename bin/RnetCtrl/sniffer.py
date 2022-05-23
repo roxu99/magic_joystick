@@ -1,6 +1,6 @@
 """
 This file implements a Sniffer in order to listen all frames on CanBus.
-The result is placed in a log file
+The raw result is placed in a log file
 """
 
 
@@ -27,19 +27,6 @@ def sniffer_daemon_stopRunning(daemonID):
     running = False
     return
 
-
-"""
-Daemon that just pass all the frame from 'listensock' to 'sendsock'
-"""
-def sniffer_daemon_pass(daemonID, listensock, sendsock):
-    global running
-    print("Deamon", daemonID, "-> started, executing 'sniffer_daemon_stock'")
-    while(running):
-        rnetFrame = can2RNET.canrecv(listensock)
-        can2RNET.cansendraw(sendsock, rnetFrame)
-    print("Deamon", daemonID, "-> ended!")
-
-
 """
 Daemon that pass all frames from 'listensock' to 'sendsock'
 It stack also all frames in the 'stockingQueue' globale queue
@@ -65,9 +52,7 @@ def sniffer_daemon_logger(daemonID, fd):
     print("Deamon", daemonID, "-> started, executing 'sniffer_daemon_logger'")
     while(running or not stockingQueue.empty()): #Tant que pile pas vide ou en execution
         frame = stockingQueue.get()
-        frame += b'\n'
         fd.write(frame)
-        #fd.write('\n')
         i += 1
     print("Captured",i+1, "frames")
     print("Deamon", daemonID, "-> ended!")
@@ -78,7 +63,7 @@ def sniffer_daemon_logger(daemonID, fd):
 # ================================================= MAIN =================================================
 
 
-logFileName="/tmp/sniffer_log.txt"
+logFileName="/tmp/sniffer_logs"
 print("Sniffer Opening log file \"",logFileName,"\" ...", sep='')
 c = 'y'
 if (os.path.exists(logFileName)):
@@ -136,4 +121,6 @@ print("All of daemon succesfully joined")
 
 
 fd.close()
+
+print("Logs saved in file '/tmp/sniffer_logs'")
 

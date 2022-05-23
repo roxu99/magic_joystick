@@ -187,22 +187,26 @@ def canwaitRTR(s, canfiltertxt):
     return cf
 
 
-def opencansocket(busnum):
+def opencansocket(busnum, doLog=True):
     busnum = str(busnum)
     # open socketcan connection
     cansocket = socket.socket(
         socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
     try:
         cansocket.bind(('can'+busnum,))
-        logger.info('socket connected to can'+busnum)
+        if doLog:
+            logger.info('socket connected to can'+busnum)
     except socket.error as e:
-        logger.error('Failed to open can'+busnum+' socket')
-        logger.warning('Attempting to open vcan'+busnum+' socket')
+        if doLog:
+            logger.error('Failed to open can'+busnum+' socket')
+            logger.warning('Attempting to open vcan'+busnum+' socket')
         try:
             cansocket.bind(('vcan'+busnum,))
-            logger.info('socket connected to vcan'+busnum)
+            if doLog:
+                logger.info('socket connected to vcan'+busnum)
         except:
-            logger.error('Failed to open vcan'+busnum+' socket')
+            if doLog:
+                logger.error('Failed to open vcan'+busnum+' socket')
             cansocket = ''
             raise e
     return cansocket

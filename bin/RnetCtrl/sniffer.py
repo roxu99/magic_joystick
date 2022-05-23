@@ -1,6 +1,9 @@
 """
 This file implements a Sniffer in order to listen all frames on CanBus.
-The raw result is placed in a log file
+The raw result is placed in a log file.
+
+UPDATE: You may wish to use 'branchCAN.py' with tshark in order to have .pcap
+files openable in Wireshark. See the top of the 'branchCAN.py' file 
 """
 
 

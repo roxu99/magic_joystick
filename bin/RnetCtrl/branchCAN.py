@@ -2,15 +2,17 @@
 """
 This file is used to just make a link between interfaces Can0 and Can1
 All of frame send by one is repeated to the other.
+
 Pass an integer as first arg to set the auto stop, ex :
     python3 branchCAN.py 12 &
-If an arg is given, no display will occure.
+If an arg is given, no display will occure, usefull to run it in backgroud.
+Use 'kill -9 <PID>' to end it ('ps' to get PID)
 
-If no arg is given, the programm wait an input to stop. (display will occure)
+If no arg is given, the programm will wait an input to stop. (display will occure)
 
-To capture the trafic, use tshark :
-    sudo tshark -a duration:10 -w nice.pcap -i can1
-This create a 'nice.pcap' file recording all trafic on 'can1' interface during 10 seconds.
+To capture the trafic between the Joystick and the motor, use tshark WHILE this programm is running :
+    sudo tshark -a duration:10 -w /tmp/recordCAN.pcap -i can1
+This create a '/tmp/recordCAN.pcap' file recording all trafic on 'can1' interface during 10 seconds.
 The .pcap file is openable in Wireshark.
 'man tshark' for more info...
 """
@@ -25,7 +27,7 @@ from magick_joystick.can2RNET import can2RNET
 
 runningTime = -1
 
-if(len(sys.argv)==2):
+if(len(sys.argv)==2): # Mute all output
     runningTime = int(sys.argv[1])
     sys.stdout = open("/dev/null",'w')
     sys.stderr = sys.stdout

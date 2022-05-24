@@ -1,10 +1,6 @@
 #!/usr/bin/python3
 import threading
-import argparse
-import time
 import sys
-import binascii
-import logging
 from magick_joystick.can2RNET import can2RNET, RnetDissector
 
 logger = can2RNET.logger
@@ -84,15 +80,13 @@ class RnetCan(threading.Thread):
     """
     def rnet_daemon(self, listensock, sendsock, logger_tag):
         logger.debug("RnetListener daemon started")
-        is_motor = False
-        is_serial = False
 
         while True:
             rnetFrame = can2RNET.canrecv(listensock)
-            frameToLog  = binascii.hexlify(rnetFrame)
+            #frameToLog  = binascii.hexlify(rnetFrame)
             #logger.debug('%s:%s:%s\n' %(time.time(), logger_tag, frameToLog))
 
-            __, subType, frameName, data, __, __ = RnetDissector.getFrameType(rnetFrame)
+            __, subType, frameName, __, __, __ = RnetDissector.getFrameType(rnetFrame)
            
             # Trash all joy position frames if not in JSM mode enabled
             if (self.jsm_mode is False) and (frameName == 'JOY_POSITION'):

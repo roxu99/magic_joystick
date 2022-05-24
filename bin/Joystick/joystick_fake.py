@@ -1,3 +1,9 @@
+#!/usr/bin/python3
+
+'''
+Ce script simule une trajectoire du joystick 
+'''
+
 import math
 import time
 import paho.mqtt.client as mqtt

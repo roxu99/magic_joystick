@@ -7,6 +7,7 @@ paho-mqtt==1.6.0
 RPi.GPIO
 setuptools
 smbus
+ads1015
 spidev
 wheel
 supervisor

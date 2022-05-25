@@ -27,7 +27,7 @@ from magick_joystick.can2RNET import can2RNET
 
 runningTime = -1
 
-if(len(sys.argv)==2): # Mute all output
+if(len(sys.argv)>=2): # Mute all output
     runningTime = int(sys.argv[1])
     sys.stdout = open("/dev/null",'w')
     sys.stderr = sys.stdout

@@ -1,5 +1,4 @@
 """
-
 This Python script is used to control the wheelchair using the keyboard arrows.
 You must have launched the whole project except the Joystick part.
 Then run this script and use the arrows to move and 'q' to quit.

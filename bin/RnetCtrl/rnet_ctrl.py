@@ -22,6 +22,9 @@ class RnetControl(threading.Thread):
 
     POSITION_FREQUENCY = 0.01   # 100Hz - RNET requirement
     STATUS_FREQUENCY = 0.1      # 10Hz
+    JOY_WATCHDOG_TIMEOUT = 20   # Force joystick position to [0,0] after 200ms without data.
+    ACTUATOR_FREQUENCY = 0.05   # 20 Hz
+    ACTUATOR_WATCHDOG_TIMEOUT = 14 # 700ms (assume mqtt publish every 2Hz / 500ms)
 
     def __init__(self, testmode = False):
         self.RnetHorn = None
@@ -29,6 +32,8 @@ class RnetControl(threading.Thread):
         self.testmode = testmode
         self.drive_mode = False
         self.battery_level = 0
+        self.joy_watchdog = self.JOY_WATCHDOG_TIMEOUT
+        self.actuator_watchdog = self.ACTUATOR_WATCHDOG_TIMEOUT
         threading.Thread.__init__(self)
         
         try:
@@ -95,6 +100,11 @@ class RnetControl(threading.Thread):
                 if self.drive_mode is True:
                     joy_data = deserialize(msg.payload)
                     
+                    # Data received from Joystck, reset watchdog
+                    self.joy_watchdog = self.JOY_WATCHDOG_TIMEOUT
+
+                    #TODO : If incoherent data not in +/-100 range critical error kill the thread
+
                     # Check if long click is pressed to get out of drive mode
                     # and force position to neutral if true
                     if (joy_data.buttons == 1) :
@@ -104,6 +114,12 @@ class RnetControl(threading.Thread):
                         self.RnetJoyPosition.set_data(joy_data.x, joy_data.y)
                         if joy_data.x or joy_data.y:
                             logger.debug("[recv %s] X=%d, Y=%d" %(msg.topic, joy_data.x, joy_data.y))
+
+            # ACTUATOR_CTRL
+            elif msg.topic == action_actuator_ctrl.TOPIC_NAME:
+                actuator_data = deserialize(msg.payload)
+                self.RnetActuatorCtrl.set_data(actuator_data.actuator_num, actuator_data.direction)
+                self.actuator_watchdog = self.ACTUATOR_WATCHDOG_TIMEOUT
 
 
             else:
@@ -140,6 +156,7 @@ class RnetControl(threading.Thread):
         self.RnetJoyPosition = RnetDissector.RnetJoyPosition(0,0,self.rnet_can.jsm_subtype)
         self.RnetBatteryLevel = RnetDissector.RnetBatteryLevel()
         self.RnetMotorMaxSpeed = RnetDissector.RnetMotorMaxSpeed(20, self.rnet_can.jsm_subtype)
+        self.RnetActuatorCtrl = RnetDissector.RnetActuatorCtrl(0, 0, self.rnet_can.jsm_subtype)
 
         return self.start_threads()
 
@@ -172,6 +189,18 @@ class RnetControl(threading.Thread):
             time.sleep(self.STATUS_FREQUENCY)
 
 
+    def actuator_ctrl_thread(self):
+        logger.info("Rnet actuator_ctrl thread started")
+        while True:
+            # Decrement actuator watchdog
+            if self.actuator_watchdog != 0 :
+                actuatorframe = self.RnetActuatorCtrl.encode()
+                self.cansend(self.rnet_can.motor_cansocket, actuatorframe)           
+                self.actuator_watchdog -= 1
+            
+            time.sleep(self.ACTUATOR_FREQUENCY)
+
+
     """
     Endless loop that sends periodically Rnet joystick position frames
     """
@@ -180,6 +209,14 @@ class RnetControl(threading.Thread):
         while True:
             joyframe = self.RnetJoyPosition.encode()
             self.cansend(self.rnet_can.motor_cansocket, joyframe)
+            
+            # Decrement joystick watchdog
+            # force position to [0,0] if no data received from 
+            # joystick 
+            self.joy_watchdog -= 1
+            if self.joy_watchdog == 0 :
+                self.RnetJoyPosition.set_data(0, 0)
+            
             time.sleep(self.POSITION_FREQUENCY)
 
 

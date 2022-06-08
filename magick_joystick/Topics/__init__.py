@@ -1,5 +1,6 @@
 import pickle
 
+# byte stream (binary file) to object hierarchy
 def deserialize(arrray):
     return pickle.loads(arrray)
 
@@ -20,7 +21,7 @@ class joystick_state(base_mqtt_message):
         self.buttons = buttons  # 0: no button, 1: Left click, 2: Right click
         self.x = x
         self.y = y
-        self.long_click = long_click    # 0: Short click, 1: lobg click
+        self.long_click = long_click    # 0: Short click, 1: long click
 
 class action_actuator_ctrl(base_mqtt_message):
     # Publication shall be 2Hz periodic

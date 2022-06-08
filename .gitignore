@@ -4,3 +4,4 @@ __pycache__
 *.swp
 test.py
 logs/
+access_point/AP_setup.sh

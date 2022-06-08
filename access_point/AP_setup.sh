@@ -12,9 +12,9 @@
 #   - Par défaut le point d'accès est désactivé. Utilisez "sudo ./AP_start.sh" pour l'activer.
 #
 
-SSID="raspi-ap"
-WIFIPSWD="raspi123456" #Min 8 lettres et chiffes
-CHANNEL="11" # A changer si pluieurs raspi proches
+SSID="raspi-rox"
+WIFIPSWD="rox123456" #Min 8 lettres et chiffes
+CHANNEL="1" # A changer si pluieurs raspi proches
 IPRESO="192.168.4" #192.168.X ou 10.X.X
 
 

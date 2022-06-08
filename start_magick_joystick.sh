@@ -10,6 +10,6 @@ fi
 # Create log directory
 mkdir -p /var/log/magick_joy/log
 export MAGICK_JOY_LOG=`mktemp -d -p /var/log/magick_joy/log`
-chown -R pi:pi $MAGICK_JOY_LOG
+chown -R pi:pi $MAGICK_JOY_LOG  #remplacer pi:pi par username:username
 
 supervisord -c supervisord.conf

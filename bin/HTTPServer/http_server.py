@@ -7,6 +7,7 @@ import os
 import time
 import subprocess
 import signal
+from IR.TV_ctrl import IR_TV
 
 app = Flask(__name__)
 lights = [False, False, False, False]
@@ -147,42 +148,36 @@ class CurrentValues(Resource):
 
 class TV(Resource):
     def __init__(self):
-        self.client = mqtt.Client() 
-        self.client.on_connect = self.__on_connect 
-        self.client.connect("localhost", 1883, 60) 
-        self.client.loop_start()
-    
-    def __on_connect(self, client, userdata, flags, rc):
-        if rc == 0:
-            print("Connection successful to TV")
-        else:
-            print(f"Connection failed with code {rc}")
+        self.tv =  IR_TV()
 
     def post(self, command):
         global last
         if command == "power":
-            msg = TV_power()
+            self.tv.send_power()
         # if command == "power_on":
         #     msg = TV_power(True)
         # if command == "power_off":
         #     msg = TV_power(False)
         elif command == "volume":
             data = request.get_json()
-            msg = TV_volume(data["type"])
+            print(data)
+            self.tv.send_volume(data["type"])
         elif command == "param":
             data = request.get_json()
-            msg = TV_param(data["type"])
+            print(data)
+            self.tv.send_param(data["type"])
         elif command == "direction":
             data = request.get_json()
-            msg = TV_direction(data["type"])
+            print(data)
+            self.tv.send_direction(data["type"])
         elif command == "number":
             data = request.get_json()
-            msg = TV_number(data["nb"])
+            print(data)
+            self.tv.send_number(data["nb"])
 
         else:
             return "", 404
 
-        self.client.publish(msg.TOPIC_NAME, msg.serialize())
         return "", 200
 
 
@@ -215,7 +210,7 @@ class TV_A(Resource):
         elif command == "get": #record the command
             data = request.get_json()
             id = data["id"]
-            f_string = "../IR/TV_A_raw_command/" + "TV_A_" + str(id) +  ".txt"
+            f_string = "IR/TV_A_raw_command/" + "TV_A_" + str(id) +  ".txt"
             file = open(f_string, "w")
             process = subprocess.Popen(["ir-ctl", "-r",  "-d", "/dev/lirc1", "--mode2"], stdout=file)   # pass cmd and args to the function
             time.sleep(RECORD_TIME)
@@ -229,7 +224,7 @@ class TV_A(Resource):
         elif command == "delete": #delete the command
             data = request.get_json()
             id = data["id"]
-            f_string = "../IR/TV_A_raw_command/" + "TV_A_" + str(id) +  ".txt"
+            f_string = "IR/TV_A_raw_command/" + "TV_A_" + str(id) +  ".txt"
             os.remove(f_string)
             last = -1
 
@@ -237,11 +232,11 @@ class TV_A(Resource):
             msg = TV_A_control(last)
             self.client.publish(msg.TOPIC_NAME, msg.serialize())
         elif command == "last-delete": #delete the last command recorded
-            f_string = "../IR/TV_A_raw_command/" + "TV_A_" + str(last) +  ".txt"
+            f_string = "IR/TV_A_raw_command/" + "TV_A_" + str(last) +  ".txt"
             os.remove(f_string)
             last = -1
         elif command == "last-modify": #modify the last command recorded
-            f_string = "../IR/TV_A_raw_command/" + "TV_A_" + str(last) +  ".txt"
+            f_string = "IR/TV_A_raw_command/" + "TV_A_" + str(last) +  ".txt"
             file = open(f_string, "w")
             process = subprocess.Popen(["ir-ctl", "-r",  "-d", "/dev/lirc1", "--mode2"], stdout=file)   # pass cmd and args to the function
             time.sleep(RECORD_TIME)
